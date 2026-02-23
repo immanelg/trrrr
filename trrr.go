@@ -8,35 +8,52 @@ import (
 	"os"
 )
 
-const defaultSrc = "auto"
-const defaultTgt = "en"
-const defaultBackend = "google"
-
 type config struct {
 	source string
 	target string
 
 	backend string
 
-	googleConfig struct{}
-	lingvaConfig lingvaConfig
+	lingvaDomain string
 }
-type lingvaConfig struct {
-	domain string
+
+func defaults(c *config) {
+	c.source = "auto"
+	c.target = "en"
+	c.backend = "google"
+	c.lingvaDomain = "translate.plausibility.cloud"
+}
+
+func readCommand(c *config) {
 }
 
 func main() {
 	var c config
 
-	var text string
-	var configFileLocation string
+	defaults(&c)
 
-	flag.StringVar(&c.source, "s", defaultSrc, "source language")
-	flag.StringVar(&c.target, "t", defaultTgt, "target language")
-	flag.StringVar(&c.backend, "b", defaultBackend, "backend")
-	flag.StringVar(&c.backend, "C", configFileLocation, "config file")
-	flag.StringVar(&text, "S", "", "translate from string instead of stdin")
+	text := ""
+
+	// CLI
+	var source string
+	var target string
+	var backend string
+	var configPath string
+	flag.StringVar(&source, "s", "", "source language")
+	flag.StringVar(&target, "t", "", "target language")
+	flag.StringVar(&backend, "b", "", "backend")
+	flag.StringVar(&configPath, "C", "", "config file")
+	flag.StringVar(&text, "S", text, "translate from string instead of stdin")
 	flag.Parse()
+
+	if configPath == "" { configPath = findConfigPath() }
+	// override defaults by config file
+	_ = readConfig(configPath, &c)
+
+	// override config file by CLI
+	if source != "" { c.source = source }
+	if target != "" { c.target = target }
+	if backend != "" { c.backend = backend }
 
 	if text == "" {
 		stat, _ := os.Stdin.Stat()
@@ -53,12 +70,6 @@ func main() {
 			return
 		}
 	}
-
-	c.lingvaConfig.domain = "translate.plausibility.cloud"
-	// if configFileLocation == "" {
-	//     findConfigFile(&configFileLocation)
-	// }
-	// readConfig(configFileLocation, &c)
 
 	switch c.backend {
 	case "google":

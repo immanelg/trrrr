@@ -16,7 +16,7 @@ type lingvaResponse struct {
 func lingva(c config, text string) (translation string, err error) {
 
 	// https://github.com/thedaviddelta/lingva-translate#rest-api-v1
-	requestUrl, _ := url.JoinPath(c.lingvaConfig.domain, "api", "v1", c.source, c.target, url.PathEscape(text))
+	requestUrl, _ := url.JoinPath(c.lingvaDomain, "api", "v1", c.source, c.target, url.PathEscape(text))
 	requestUrl = "https://" + requestUrl
 	resp, err := http.Get(requestUrl)
 	if err != nil {
