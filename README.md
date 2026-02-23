@@ -12,24 +12,25 @@ Install from [Github releases](https://github.com/immanelg/trrr/releases). From 
 
 # Usage
 ```sh
-trrr [OPTIONS]... [SRC]:[DST] [CONTENT]
+trrr [OPTIONS]...
 ```
-
-With no CONTENT, reads standard input. 
-
-If `SRC` is empty, it defaults to `auto`. 
-
-If `DST` is empty, it defaults to `en`.
+Options:
+```
+    -s SRC: source language (default: auto)
+    -t TARGET: target language
+    -b BACKEND: backend (google or lingva)
+	-S STRING: use this string instead of stdin
+```
+Reads text from either stdin or `-S` option.
 
 # Backends 
-- Google Translate
-
-Needs more! Send your PRs. Please... :(
+- Google Translate (unofficial)
+- Lingva Translate
 
 # Examples
 Translate from English to Spanish. Type text to stdin via cat:
 ```sh
-$ cat | trrr en:es
+$ cat | trrr -s en -t es
 Things!
 <Ctrl-D>
 ¡Cosas!
@@ -37,32 +38,32 @@ Things!
 
 Auto-detect source language, translate to Hungarian and read text from the second argument:
 ```sh
-$ trrr :hu 'things!'
+$ trrr -t hu 'things!'
 A dolgok!
 ```
 
 Translate text to Russian from X11 primary clipboard (selection) and show the result in a notification:
 ```sh
-xclip -o | trrr :ru | xargs -0 -I '{}' notify-send -- "trrr" '{}'
+xclip -o | trrr -t ru | xargs -0 -I '{}' notify-send -- "trrr" '{}'
 ```
 
 Same as above, but also copy the result to clipboard:
 ```sh
-xclip -o | trrr :ru | tee >(xclip -selection clipboard) | xargs -0 -I '{}' notify-send -- "trrr" '{}'
+xclip -o | trrr -t ru | tee >(xclip -selection clipboard) | xargs -0 -I '{}' notify-send -- "trrr" '{}'
 ```
 
 Prompt for text with rofi and display the translation with rofi:
 ```sh
-rofi -dmenu -p 'translate' -l 0 | trrr :ru | xargs -0 -I\{\} rofi -p 'translation' -e \{\}
+rofi -dmenu -p 'translate' -l 0 | trrr -t ru | xargs -0 -I\{\} rofi -p 'translation' -e \{\}
 ```
 
 Example for sxhkd config (~/.config/sxhkd/sxhkdrc):
 ```conf
 super + {w,W}
-    xclip -o | trrr :{ru,en} | xargs -0 -I '\{\}' notify-send -- "trrr" '\{\}'
+    xclip -o | trrr -t {ru,en} | xargs -0 -I '\{\}' notify-send -- "trrr" '\{\}'
 
 super + alt + {w,W}
-    rofi -dmenu -p 'translate' -l 0 | trrr :{ru,en} | xargs -0 -I\{\} rofi -p 'translation' -e \{\}
+    rofi -dmenu -p 'translate' -l 0 | trrr -t {ru,en} | xargs -0 -I\{\} rofi -p 'translation' -e \{\}
 ```
 
 

@@ -1,0 +1,10 @@
+* --tui
+* config: trrr -C ~/.config/trrr.ini
+* backends: trrr -b google+lingva+deepl
+* check https://github.com/soimort/translate-shell
+* multi-lang: trrr -s auto -d en+ru+cn
+* rephrase
+* audio
+* dicts: echo "word" | trrr -dict 
+* files: trrr -i input.txt -o output.txt
+* list languages: trrr -list
